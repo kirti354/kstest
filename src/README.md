@@ -48,3 +48,13 @@ The application uses a simple data model with meaningful identifiers:
    - Grade level
 
 All data is stored in memory, which means data will be reset when the server restarts.
+
+<!-- BEGIN GENERATED API DOCS -->
+
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | `/` | root |
+| GET | `/activities` | get_activities |
+| POST | `/activities/{activity_name}/signup` | signup_for_activity |
+
+<!-- END GENERATED API DOCS -->
