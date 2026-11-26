@@ -1,0 +1,41 @@
+#!/usr/bin/sh
+
+set -e
+
+PYTHON_ARGS=""
+PYTHON=""
+
+if [ -x "/c/Users/kirti_shukla/AppData/Local/Programs/Python/Python312/python.exe" ]; then
+  PYTHON="/c/Users/kirti_shukla/AppData/Local/Programs/Python/Python312/python.exe"
+fi
+
+if [ -z "$PYTHON" ]; then
+  PYTHON=$(command -v python3 || command -v python3.exe || true)
+fi
+
+if [ -z "$PYTHON" ]; then
+  PYTHON=$(command -v py.exe || command -v py || true)
+  if [ -n "$PYTHON" ]; then
+    PYTHON_ARGS="-3"
+  fi
+fi
+
+if [ -z "$PYTHON" ] && [ -n "$USERPROFILE" ]; then
+  WINDOWS_PYTHON=$(printf '%s' "$USERPROFILE" | sed 's#^C:\\#/c/#; s#\\\\#/#g')
+  for candidate in \
+    "$WINDOWS_PYTHON/AppData/Local/Programs/Python/Python312/python.exe" \
+    "$WINDOWS_PYTHON/AppData/Local/Programs/Python/Python311/python.exe"; do
+    if [ -x "$candidate" ]; then
+      PYTHON="$candidate"
+      break
+    fi
+  done
+fi
+
+if [ -z "$PYTHON" ]; then
+  echo "Pre-commit hook: Python executable not found" >&2
+  exit 1
+fi
+
+"$PYTHON" $PYTHON_ARGS -m pytest -q
+"$PYTHON" $PYTHON_ARGS src/documentation_sync.py --check
